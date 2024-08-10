@@ -1,0 +1,20 @@
+---
+- name: Check if k3s is already installed
+  stat:
+    path: /usr/local/bin/k3s
+  register: k3s_install_check
+
+- name: Install k3s
+  shell: |
+    curl -sfL https://get.k3s.io | sh -s - \
+      --data-dir /mnt/data/k3s \
+      --kubelet-arg "root-dir=/mnt/data/kubelet" \
+      --tls-san {{ ansible_host }}
+  when: k3s_install_check.stat.exists == False
+
+- name: Wait for k3s service to be active
+  shell: |
+    while ! systemctl is-active --quiet k3s; do
+      sleep 2
+    done
+  when: k3s_install_check.stat.exists == False

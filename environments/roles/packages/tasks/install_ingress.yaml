@@ -1,0 +1,33 @@
+---
+- name: Include ingress variables
+  include_vars: "ingress.yaml"
+
+- name: Install Ingress
+  block:
+  - name: Add Helm repository {{ ingress_name }}
+    local_action:
+      module: kubernetes.core.helm_repository
+      name: "{{ ingress_helm_repo_name }}"
+      repo_url: "{{ ingress_helm_repo_url }}"
+
+  - name: Install Ingress
+    local_action:
+      module: kubernetes.core.helm
+      name: "{{ ingress_name }}"
+      chart_ref: "{{ ingress_helm_repo_name }}/{{ ingress_name }}"
+      release_namespace: "{{ ingress_namespace }}"
+      chart_version: "{{ ingress_helm_version }}"
+      create_namespace: true
+      state: present
+      kubeconfig: ./kubeconfig
+      values:
+        controller:
+          ingressClassResource:
+            name: "{{ ingress_class_name }}"
+          service:
+            type: "NodePort"
+            nodePorts:
+              http: "{{ ingress_node_port_http }}"
+              https: "{{ ingress_node_port_https }}"
+  when: ingress_install == true
+  become: false

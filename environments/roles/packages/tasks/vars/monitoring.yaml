@@ -1,0 +1,10 @@
+monitoring_install: true
+monitoring_name: "kube-prometheus-stack"
+monitoring_grafana_admin_password: "deepc"
+monitoring_grafana_path: "/grafana"
+monitoring_helm_repo_name: "prometheus-community"
+monitoring_helm_repo_url: "https://prometheus-community.github.io/helm-charts"
+monitoring_helm_version: "61.3.2"
+monitoring_namespace: "monitoring"
+monitoring_storage_class_name: "local-path"
+monitoring_storage_size: "10Gi"

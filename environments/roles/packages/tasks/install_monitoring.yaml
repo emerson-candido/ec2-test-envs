@@ -1,0 +1,48 @@
+---
+- name: Include monitoring variables
+  include_vars: "monitoring.yaml"
+
+- name: Install Monitoring
+  block:
+  - name: Include ingress variables
+    include_vars: "ingress.yaml"
+
+  - name: Add Helm repository {{ monitoring_name }}
+    local_action:
+      module: kubernetes.core.helm_repository
+      name: "{{ monitoring_helm_repo_name }}"
+      repo_url: "{{ monitoring_helm_repo_url }}"
+
+  - name: Install Monitoring
+    local_action:
+      module: kubernetes.core.helm
+      name: "{{ monitoring_name }}"
+      chart_ref: "{{ monitoring_helm_repo_name }}/{{ monitoring_name }}"
+      release_namespace: "{{ monitoring_namespace }}"
+      chart_version: "{{ monitoring_helm_version }}"
+      create_namespace: true
+      state: present
+      kubeconfig: ./kubeconfig
+      values:
+        grafana:
+          adminPassword: "{{ monitoring_grafana_admin_password }}"
+          ingress:
+            enabled: true
+            path: "{{ monitoring_grafana_path }}"
+            ingressClassName: "{{ ingress_class_name }}"
+          grafana.ini:
+            server:
+              root_url: "%(protocol)s://%(domain)s{{ monitoring_grafana_path }}/"
+              serve_from_sub_path: true
+        prometheus:
+          prometheusSpec:
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: "{{ monitoring_storage_class_name }}"
+                  accessModes: ["ReadWriteOnce"]
+                  resources:
+                    requests:
+                      storage: "{{ monitoring_storage_size }}"
+  when: monitoring_install == true
+  become: false

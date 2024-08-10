@@ -1,0 +1,2 @@
+[all]
+host ansible_host=3.71.83.199 ansible_user=ubuntu ansible_ssh_private_key_file=/home/emerson/.ssh/personal_id_ed25519

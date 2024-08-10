@@ -1,0 +1,10 @@
+---
+- name: Setup disk
+  block:
+    - include_role:
+        name: disk
+        tasks_from: packages
+    - include_role:
+        name: disk
+        tasks_from: volumes
+
