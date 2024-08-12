@@ -1,4 +1,10 @@
 ---
+- name: Include devices variables
+  include_vars: "vars/devices.yaml"
+
+- name: Include lvm variables
+  include_vars: "vars/lvm.yaml"
+
 - name: Ensure {{ device_path }} is partitioned
   parted:
     device: "{{ device_path }}"
@@ -6,45 +12,45 @@
     state: present
     part_type: primary
 
-- name: Create physical volume on {{ device_path }}1
+- name: Create physical volume {{ vg_name }} on {{ device_path }}1 with size {{ device_size }}
   community.general.lvg:
-    vg: vg_data
+    vg: "{{ vg_name }}"
     pvs: "{{ device_path }}1"
     pesize: "{{ device_size }}"
 
-- name: Check if logical volume lv_data exists
-  command: lvdisplay /dev/vg_data/lv_data
+- name: Check if logical volume {{ lv_name }} exists
+  command: lvdisplay /dev/{{ vg_name }}/{{ lv_name }}
   register: lv_data_check
   ignore_errors: yes
 
-- name: Create a logical volume on {{ device_path }}1
+- name: Create the logical volume {{ lv_name }} on {{ device_path }}1
   community.general.lvol:
-    vg: vg_data
-    lv: lv_data
+    vg: "{{ vg_name }}"
+    lv: "{{ lv_name }}"
     size: +100%FREE
   when: lv_data_check.rc != 0
 
-- name: Format the logical volume with ext4
+- name: Format the logical volume /dev/{{ vg_name }}/{{ lv_name }} with {{ lv_fs_type }}
   filesystem:
-    fstype: ext4
-    dev: /dev/vg_data/lv_data
+    fstype: "{{ lv_fs_type }}"
+    dev: "/dev/{{ vg_name }}/{{ lv_name }}"
 
-- name: Create mount point
+- name: Create mount point {{ data_volume }}
   file:
-    path: /mnt/data
+    path: "{{ data_volume }}"
     state: directory
 
-- name: Mount the logical volume
+- name: Mount the logical volume {{ data_volume }} from /dev/{{ vg_name }}/{{ lv_name }}
   mount:
-    path: /mnt/data
-    src: /dev/vg_data/lv_data
-    fstype: ext4
+    path: "{{ data_volume }}"
+    src: "/dev/{{ vg_name }}/{{ lv_name }}"
+    fstype: "{{ lv_fs_type }}"
     state: mounted
 
-- name: Ensure the logical volume is mounted on boot
+- name: Ensure the logical volume {{ data_volume }} is mounted on boot
   mount:
-    path: /mnt/data
-    src: /dev/vg_data/lv_data
-    fstype: ext4
+    path: "{{ data_volume }}"
+    src: "/dev/{{ vg_name }}/{{ lv_name }}"
+    fstype: "{{ lv_fs_type }}"
     opts: defaults
     state: present

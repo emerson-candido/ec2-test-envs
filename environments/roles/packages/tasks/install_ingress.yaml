@@ -1,6 +1,6 @@
 ---
 - name: Include ingress variables
-  include_vars: "ingress.yaml"
+  include_vars: "vars/ingress.yaml"
 
 - name: Install Ingress
   block:
@@ -19,7 +19,7 @@
       chart_version: "{{ ingress_helm_version }}"
       create_namespace: true
       state: present
-      kubeconfig: ./kubeconfig
+      kubeconfig: "{{ kubeconfig_path }}"
       values:
         controller:
           ingressClassResource:

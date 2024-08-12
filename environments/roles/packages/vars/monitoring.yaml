@@ -1,3 +1,4 @@
+---
 monitoring_install: true
 monitoring_name: "kube-prometheus-stack"
 monitoring_grafana_admin_password: "deepc"

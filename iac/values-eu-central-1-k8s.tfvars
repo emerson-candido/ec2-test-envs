@@ -4,7 +4,9 @@ compute = {
     ipv6_address_count = 1
     second_disk_name = "/dev/xvdh"
     second_disk_size = 50
+    ssh_private_key_path = "~/.ssh/personal_id_ed25519"
     ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKf1KDEi7BKLR/aabiG/lkJHA/eP+dznDMKmbTD7kwSX emerson.candido@live.com"
+    user = "ubuntu"
 }
 
 env = "deepc-slo"

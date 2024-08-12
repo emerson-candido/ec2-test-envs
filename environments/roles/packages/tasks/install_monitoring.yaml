@@ -1,11 +1,11 @@
 ---
 - name: Include monitoring variables
-  include_vars: "monitoring.yaml"
+  include_vars: "vars/monitoring.yaml"
 
 - name: Install Monitoring
   block:
   - name: Include ingress variables
-    include_vars: "ingress.yaml"
+    include_vars: "vars/ingress.yaml"
 
   - name: Add Helm repository {{ monitoring_name }}
     local_action:
@@ -22,7 +22,7 @@
       chart_version: "{{ monitoring_helm_version }}"
       create_namespace: true
       state: present
-      kubeconfig: ./kubeconfig
+      kubeconfig: "{{ kubeconfig_path }}"
       values:
         grafana:
           adminPassword: "{{ monitoring_grafana_admin_password }}"

@@ -1,18 +1,18 @@
 ---
-- name: Default bootstrap for Linux
+- name: Kubernetes Environment
   block:
-    #- name: Setup disk properly
-    #  include_role:
-    #    name: disk
-    #    tasks_from: setup
-    #- name: Install K3S
-    #  include_role:
-    #    name: k3s
-    #    tasks_from: install
-    #- name: Generate kubeconfig
-    #  include_role:
-    #    name: k3s
-    #    tasks_from: generate_kubeconfig
+    - name: Setup disk properly
+      include_role:
+        name: disk
+        tasks_from: setup
+    - name: Install K3S
+      include_role:
+        name: k3s
+        tasks_from: install
+    - name: Generate kubeconfig
+      include_role:
+        name: k3s
+        tasks_from: generate_kubeconfig
     - name: Install ingress
       include_role:
         name: packages

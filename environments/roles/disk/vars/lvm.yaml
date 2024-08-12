@@ -1,0 +1,4 @@
+---
+vg_name: "vg_data"
+lv_name: "lv_data"
+lv_fs_type: "ext4"

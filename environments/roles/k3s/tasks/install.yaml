@@ -7,8 +7,8 @@
 - name: Install k3s
   shell: |
     curl -sfL https://get.k3s.io | sh -s - \
-      --data-dir /mnt/data/k3s \
-      --kubelet-arg "root-dir=/mnt/data/kubelet" \
+      --data-dir {{ data_volume }}/k3s \
+      --kubelet-arg "root-dir={{ data_volume }}/kubelet" \
       --tls-san {{ ansible_host }}
   when: k3s_install_check.stat.exists == False
 
